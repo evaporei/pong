@@ -1,8 +1,16 @@
+local push = require('push')
+
+-- virtual
+GAME_WIDTH = 432
+GAME_HEIGHT = 243
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
 function love.load()
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+    love.graphics.setDefaultFilter('nearest', 'nearest')
+
+    push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         resizable = false,
         vsync = true
@@ -16,11 +24,15 @@ function love.keypressed(key)
 end
 
 function love.draw()
+    push:apply('start')
+
     love.graphics.printf(
         'Hello Pong!',
         0,
-        WINDOW_HEIGHT / 2,
-        WINDOW_WIDTH,
+        GAME_HEIGHT / 2,
+        GAME_WIDTH,
         'center'
     )
+
+    push:apply('end')
 end

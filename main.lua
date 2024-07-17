@@ -1,5 +1,8 @@
 local push = require('push')
 
+local Paddle = require('paddle')
+local Ball = require('ball')
+
 -- virtual
 GAME_WIDTH = 432
 GAME_HEIGHT = 243
@@ -10,26 +13,15 @@ WINDOW_HEIGHT = 720
 local smallFont = love.graphics.newFont('font.ttf', 8)
 local scoreFont = love.graphics.newFont('font.ttf', 32)
 
-PADDLE_SPEED = 200
-
-PADDLE_WIDTH = 5
-PADDLE_HEIGHT = 20
-
-BALL_SIDE = 4
-
 local player1Score = 0
 local player2Score = 0
 
-local player1Y = 30
-local player2Y = GAME_HEIGHT - 50
+-- first paddle (left side)
+local player1 = Paddle.new(5, 30, GAME_HEIGHT)
+-- second paddle (right side)
+local player2 = Paddle.new(GAME_WIDTH - 10, GAME_HEIGHT - 50, GAME_HEIGHT)
 
--- position
-local ballX = GAME_WIDTH / 2 - (BALL_SIDE / 2)
-local ballY = GAME_HEIGHT / 2 - (BALL_SIDE / 2)
-
--- velocity
-local ballVX = math.random(2) == 1 and 100 or -100
-local ballVY = math.random(-50, 50)
+local ball = Ball.new(GAME_WIDTH / 2, GAME_HEIGHT / 2)
 
 local gameState = 'start'
 
@@ -49,21 +41,27 @@ function love.update(dt)
     -- sorry I use workman layout
     -- this is WASD
     if love.keyboard.isDown('d') then
-        player1Y = math.max(0, player1Y + -PADDLE_SPEED * dt)
+        player1:up()
     elseif love.keyboard.isDown('s') then
-        player1Y = math.min(GAME_HEIGHT - PADDLE_HEIGHT, player1Y + PADDLE_SPEED * dt)
+        player1:down()
+    else
+        player1:resetVelocity()
     end
 
     if love.keyboard.isDown('up') then
-        player2Y = math.max(0, player2Y + -PADDLE_SPEED * dt)
+        player2:up()
     elseif love.keyboard.isDown('down') then
-        player2Y = math.min(GAME_HEIGHT - PADDLE_HEIGHT, player2Y + PADDLE_SPEED * dt)
+        player2:down()
+    else
+        player2:resetVelocity()
     end
 
     if gameState == 'play' then
-        ballX = ballX + ballVX * dt
-        ballY = ballY + ballVY * dt
+        ball:update(dt)
     end
+
+    player1:update(dt)
+    player2:update(dt)
 end
 
 function love.keypressed(key)
@@ -75,11 +73,7 @@ function love.keypressed(key)
         else
             gameState = 'start'
 
-            ballX = GAME_WIDTH / 2 - (BALL_SIDE / 2)
-            ballY = GAME_HEIGHT / 2 - (BALL_SIDE / 2)
-
-            ballVX = math.random(2) == 1 and 100 or -100
-            ballVY = math.random(-50, 50)
+            ball:reset()
         end
     end
 end
@@ -113,14 +107,10 @@ function love.draw()
         GAME_HEIGHT / 3
     )
 
-    -- first paddle (left side)
-    love.graphics.rectangle('fill', 5, player1Y, PADDLE_WIDTH, PADDLE_HEIGHT)
+    player1:render()
+    player2:render()
 
-    -- second paddle (right side)
-    love.graphics.rectangle('fill', GAME_WIDTH - 10, player2Y, PADDLE_WIDTH, PADDLE_HEIGHT)
-
-    -- ball
-    love.graphics.rectangle('fill', ballX, ballY, BALL_SIDE, BALL_SIDE)
+    ball:render()
 
     push:apply('end')
 end

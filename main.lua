@@ -12,6 +12,11 @@ WINDOW_HEIGHT = 720
 
 WINNING_SCORE = 10
 
+-- usually done inside love.load, but I didn't want
+-- to make the fonts nil first, nor global
+-- I can think of an abstraction later
+love.graphics.setDefaultFilter('nearest', 'nearest')
+
 local smallFont = love.graphics.newFont('font.ttf', 8)
 local largeFont = love.graphics.newFont('font.ttf', 16)
 local scoreFont = love.graphics.newFont('font.ttf', 32)
@@ -34,8 +39,6 @@ local gameState = 'start'
 local enableFPS = false
 
 function love.load()
-    love.graphics.setDefaultFilter('nearest', 'nearest')
-
     love.window.setTitle('Pong')
 
     math.randomseed(os.time())
@@ -146,7 +149,7 @@ end
 local function displayFPS()
     love.graphics.setFont(smallFont)
     love.graphics.setColor(0, 255/255, 0, 255/255)
-    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()))
+    love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
 end
 
 local function displayScore()
@@ -158,7 +161,7 @@ local function displayScore()
     )
     love.graphics.print(
         tostring(player2Score),
-        GAME_WIDTH / 2 + 50,
+        GAME_WIDTH / 2 + 30,
         GAME_HEIGHT / 3
     )
 end

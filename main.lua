@@ -10,13 +10,17 @@ GAME_HEIGHT = 243
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
+WINNING_SCORE = 10
+
 local smallFont = love.graphics.newFont('font.ttf', 8)
+local largeFont = love.graphics.newFont('font.ttf', 16)
 local scoreFont = love.graphics.newFont('font.ttf', 32)
 
 local player1Score = 0
 local player2Score = 0
 
 local servingPlayer = 1
+local winningPlayer = 0 -- none
 
 -- first paddle (left side)
 local player1 = Paddle.new(5, 30, GAME_HEIGHT)
@@ -57,21 +61,33 @@ function love.update(dt)
         end
 
         ball:bounceWall(GAME_HEIGHT)
-    end
 
-    -- score
-    if ball.x < 0 then
-        servingPlayer = 1
-        player2Score = player2Score + 1
-        ball:reset()
-        gameState = 'start'
-    end
+        -- score
+        if ball.x < 0 then
+            servingPlayer = 1
+            player2Score = player2Score + 1
 
-    if ball.x > GAME_WIDTH then
-        servingPlayer = 2
-        player1Score = player1Score + 1
-        ball:reset()
-        gameState = 'start'
+            if player2Score == WINNING_SCORE then
+                winningPlayer = 2
+                gameState = 'done'
+            else
+                gameState = 'serve'
+                ball:reset()
+            end
+        end
+
+        if ball.x > GAME_WIDTH then
+            servingPlayer = 2
+            player1Score = player1Score + 1
+
+            if player1Score == WINNING_SCORE then
+                winningPlayer = 1
+                gameState = 'done'
+            else
+                gameState = 'serve'
+                ball:reset()
+            end
+        end
     end
 
     -- sorry I use workman layout
@@ -106,8 +122,21 @@ function love.keypressed(key)
     elseif key == 'enter' or key == 'return' then
         if gameState == 'start' then
             gameState = 'serve'
-        else
+        elseif gameState == 'serve' then
             gameState = 'play'
+        elseif gameState == 'done' then
+            gameState = 'serve'
+
+            ball:reset()
+
+            player1Score = 0
+            player2Score = 0
+
+            if winningPlayer == 1 then
+                servingPlayer = 2
+            else
+                servingPlayer = 1
+            end
         end
     elseif key == 'f' then
         enableFPS = not enableFPS
@@ -139,6 +168,8 @@ function love.draw()
 
     -- reset background to similar color of original pong
     love.graphics.clear(40/255, 45/255, 52/255, 255/255)
+
+    displayScore()
 
     -- render title
     if gameState == 'start' then
@@ -175,10 +206,24 @@ function love.draw()
         )
     elseif gameState == 'play' then
         -- nothing
+    elseif gameState == 'done' then
+        love.graphics.setFont(largeFont)
+        love.graphics.printf(
+            'Player ' .. tostring(winningPlayer) .. "wins!",
+            0,
+            10,
+            GAME_WIDTH,
+            'center'
+        )
+        love.graphics.setFont(smallFont)
+        love.graphics.printf(
+            'Press Enter to restart!',
+            0,
+            30,
+            GAME_WIDTH,
+            'center'
+        )
     end
-
-    -- render score
-    displayScore()
 
     player1:render()
     player2:render()

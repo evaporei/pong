@@ -49,7 +49,7 @@ function love.update(dt)
     elseif love.keyboard.isDown('s') then
         player1:down()
     else
-        player1:resetVelocity()
+        player1:stop()
     end
 
     if love.keyboard.isDown('up') then
@@ -57,7 +57,7 @@ function love.update(dt)
     elseif love.keyboard.isDown('down') then
         player2:down()
     else
-        player2:resetVelocity()
+        player2:stop()
     end
 
     if gameState == 'play' then

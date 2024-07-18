@@ -24,7 +24,8 @@ function Paddle:down()
     self.vy = PADDLE_SPEED
 end
 
-function Paddle:resetVelocity()
+-- reset velocity
+function Paddle:stop()
     self.vy = 0
 end
 

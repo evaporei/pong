@@ -36,6 +36,12 @@ local ball = Ball.new(GAME_WIDTH / 2, GAME_HEIGHT / 2)
 
 local gameState = 'start'
 
+local sounds = {
+    ['paddle_hit'] = love.audio.newSource('sounds/paddle_hit.wav', 'static'),
+    ['score'] = love.audio.newSource('sounds/score.wav', 'static'),
+    ['wall_hit'] = love.audio.newSource('sounds/wall_hit.wav', 'static')
+}
+
 local enableFPS = false
 
 function love.load()
@@ -58,17 +64,22 @@ function love.update(dt)
     elseif gameState == 'play' then
         if ball:collides(player1) then
             ball:bouncePaddle(player1, 'right')
+            sounds['paddle_hit']:play()
         end
         if ball:collides(player2) then
             ball:bouncePaddle(player2, 'left')
+            sounds['paddle_hit']:play()
         end
 
-        ball:bounceWall(GAME_HEIGHT)
+        if ball:bounceWall(GAME_HEIGHT) then
+            sounds['wall_hit']:play()
+        end
 
         -- score
         if ball.x < 0 then
             servingPlayer = 1
             player2Score = player2Score + 1
+            sounds['score']:play()
 
             if player2Score == WINNING_SCORE then
                 winningPlayer = 2
@@ -82,6 +93,7 @@ function love.update(dt)
         if ball.x > GAME_WIDTH then
             servingPlayer = 2
             player1Score = player1Score + 1
+            sounds['score']:play()
 
             if player1Score == WINNING_SCORE then
                 winningPlayer = 1

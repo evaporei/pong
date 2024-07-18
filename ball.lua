@@ -60,6 +60,15 @@ function Ball:bouncePaddle(paddle, dir)
     end
 end
 
+function Ball:serve(dir)
+    self.vy = genVY()
+    if dir == 'right' then
+        self.vx = math.random(140, 200)
+    elseif dir == 'left' then
+        self.vx = -math.random(140, 200)
+    end
+end
+
 function Ball:bounceWall(GAME_HEIGHT)
     if self.y <= 0 then
         self.y = 0

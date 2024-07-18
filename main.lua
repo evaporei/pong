@@ -27,6 +27,8 @@ local ball = Ball.new(GAME_WIDTH / 2, GAME_HEIGHT / 2)
 
 local gameState = 'start'
 
+local enableFPS = false
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -44,7 +46,9 @@ function love.load()
 end
 
 function love.update(dt)
-    if gameState == 'play' then
+    if gameState == 'serve' then
+        ball:serve(servingPlayer == 1 and "right" or "left")
+    elseif gameState == 'play' then
         if ball:collides(player1) then
             ball:bouncePaddle(player1, 'right')
         end
@@ -101,12 +105,12 @@ function love.keypressed(key)
         love.event.quit()
     elseif key == 'enter' or key == 'return' then
         if gameState == 'start' then
-            gameState = 'play'
+            gameState = 'serve'
         else
-            gameState = 'start'
-
-            ball:reset()
+            gameState = 'play'
         end
+    elseif key == 'f' then
+        enableFPS = not enableFPS
     end
 end
 
@@ -116,23 +120,7 @@ local function displayFPS()
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()))
 end
 
-function love.draw()
-    push:apply('start')
-
-    -- reset background to similar color of original pong
-    love.graphics.clear(40/255, 45/255, 52/255, 255/255)
-
-    -- render title
-    love.graphics.setFont(smallFont)
-    love.graphics.printf(
-        'Hello Pong!',
-        0,
-        20,
-        GAME_WIDTH,
-        'center'
-    )
-
-    -- render score
+local function displayScore()
     love.graphics.setFont(scoreFont)
     love.graphics.print(
         tostring(player1Score),
@@ -144,13 +132,62 @@ function love.draw()
         GAME_WIDTH / 2 + 50,
         GAME_HEIGHT / 3
     )
+end
+
+function love.draw()
+    push:apply('start')
+
+    -- reset background to similar color of original pong
+    love.graphics.clear(40/255, 45/255, 52/255, 255/255)
+
+    -- render title
+    if gameState == 'start' then
+        love.graphics.setFont(smallFont)
+        love.graphics.printf(
+            'Welcome to Pong!',
+            0,
+            10,
+            GAME_WIDTH,
+            'center'
+        )
+        love.graphics.printf(
+            'Press Enter to begin!',
+            0,
+            20,
+            GAME_WIDTH,
+            'center'
+        )
+    elseif gameState == 'serve' then
+        love.graphics.setFont(smallFont)
+        love.graphics.printf(
+            'Player ' .. tostring(servingPlayer) .. "'s serve!",
+            0,
+            10,
+            GAME_WIDTH,
+            'center'
+        )
+        love.graphics.printf(
+            'Press Enter to serve!',
+            0,
+            20,
+            GAME_WIDTH,
+            'center'
+        )
+    elseif gameState == 'play' then
+        -- nothing
+    end
+
+    -- render score
+    displayScore()
 
     player1:render()
     player2:render()
 
     ball:render()
 
-    displayFPS()
+    if enableFPS then
+        displayFPS()
+    end
 
     push:apply('end')
 end

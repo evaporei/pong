@@ -53,9 +53,13 @@ function love.load()
 
     push:setupScreen(GAME_WIDTH, GAME_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = false,
+        resizable = true,
         vsync = true
     })
+end
+
+function love.resize(w, h)
+    push:resize(w, h)
 end
 
 function love.update(dt)

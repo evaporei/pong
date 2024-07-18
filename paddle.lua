@@ -8,6 +8,8 @@ PADDLE_SPEED = 200
 function Paddle.new(startX, startY, gameHeight)
     local p = {
         gameHeight = gameHeight,
+        width = PADDLE_WIDTH,
+        height = PADDLE_HEIGHT,
         x = startX,
         y = startY,
         vy = 0

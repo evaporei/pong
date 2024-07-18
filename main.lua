@@ -42,6 +42,17 @@ function love.load()
 end
 
 function love.update(dt)
+    if gameState == 'play' then
+        if ball:collides(player1) then
+            ball:bouncePaddle(player1, 'right')
+        end
+        if ball:collides(player2) then
+            ball:bouncePaddle(player2, 'left')
+        end
+
+        ball:bounceWall(GAME_HEIGHT)
+    end
+
     -- sorry I use workman layout
     -- this is WASD
     if love.keyboard.isDown('d') then

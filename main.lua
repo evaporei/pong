@@ -16,6 +16,8 @@ local scoreFont = love.graphics.newFont('font.ttf', 32)
 local player1Score = 0
 local player2Score = 0
 
+local servingPlayer = 1
+
 -- first paddle (left side)
 local player1 = Paddle.new(5, 30, GAME_HEIGHT)
 -- second paddle (right side)
@@ -51,6 +53,21 @@ function love.update(dt)
         end
 
         ball:bounceWall(GAME_HEIGHT)
+    end
+
+    -- score
+    if ball.x < 0 then
+        servingPlayer = 1
+        player2Score = player2Score + 1
+        ball:reset()
+        gameState = 'start'
+    end
+
+    if ball.x > GAME_WIDTH then
+        servingPlayer = 2
+        player1Score = player1Score + 1
+        ball:reset()
+        gameState = 'start'
     end
 
     -- sorry I use workman layout

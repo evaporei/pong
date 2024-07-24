@@ -2,6 +2,7 @@ local push = require('push')
 
 local Fonts = require('fonts')
 local Paddle = require('paddle')
+local Ball = require('ball')
 
 local Game = {}
 
@@ -26,6 +27,8 @@ function Game:setup()
 
     self.player1 = Paddle.new(5, 30)
     self.player2 = Paddle.new(self.width - 10, self.height - 50)
+
+    self.ball = Ball.new(self.width, self.height)
 
     -- d instead of w because I use workman layout
     self.player1:setInput({ up = 'd', down = 's' })
@@ -64,6 +67,8 @@ function Game:render()
 
     self.player1:render()
     self.player2:render()
+
+    self.ball:render()
 
     push:finish()
 end

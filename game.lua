@@ -4,6 +4,7 @@ local Fonts = require('fonts')
 local Paddle = require('paddle')
 local Ball = require('ball')
 local Scores = require('scores')
+local Sounds = require('sounds')
 
 local Game = {}
 
@@ -25,6 +26,7 @@ function Game:setup()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
     self.fonts = Fonts.new()
+    self.sounds = Sounds.new()
 
     math.randomseed(os.time())
 
@@ -67,11 +69,15 @@ end
 function Game:handleCollisions()
     if self.ball:collides(self.player1) then
         self.ball:bouncePaddle(self.player1, 'right')
+        self.sounds['paddle_hit']:play()
     end
     if self.ball:collides(self.player2) then
         self.ball:bouncePaddle(self.player2, 'left')
+        self.sounds['paddle_hit']:play()
     end
-    self.ball:bounceWall(self.height)
+    if self.ball:bounceWall(self.height) then
+        self.sounds['wall_hit']:play()
+    end
 end
 
 function Game:update(dt)

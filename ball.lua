@@ -59,12 +59,16 @@ function Ball:bounceWall(gameHeight)
     if self.y + self.height > gameHeight then
         self.y = gameHeight - self.height
         self.vy = -self.vy
+        return true
     end
 
     if self.y < 0 then
         self.y = 0
         self.vy = -self.vy
+        return true
     end
+
+    return false
 end
 
 function Ball:update(dt)

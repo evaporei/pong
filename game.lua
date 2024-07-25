@@ -57,6 +57,8 @@ function Game:update(dt)
 
     self.player1:update(dt, self.height)
     self.player2:update(dt, self.height)
+
+    self.ball:update(dt)
 end
 
 function Game:render()

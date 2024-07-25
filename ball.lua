@@ -71,6 +71,16 @@ function Ball:bounceWall(gameHeight)
     return false
 end
 
+function Ball:isOutOfGame(gameWidth)
+    if self.x < 0 then
+        return 'left'
+    end
+    if self.x + self.width > gameWidth then
+        return 'right'
+    end
+    return nil
+end
+
 function Ball:update(dt)
     self.x = self.x + self.vx * dt
     self.y = self.y + self.vy * dt

@@ -58,10 +58,12 @@ function Game:handleKeyPressed(key)
     elseif key == 'enter' or key == 'return' then
         if self.state == 'start' then
             self.state = 'play'
-        else
+        elseif self.state == 'play' then
             self.state = 'start'
-
             self.ball:reset()
+        elseif self.state == 'done' then
+            self.state = 'start'
+            self.scores:reset()
         end
     end
 end
@@ -80,9 +82,25 @@ function Game:handleCollisions()
     end
 end
 
+function Game:handleScore()
+    local dirOut = self.ball:isOutOfGame(self.width)
+    if dirOut then
+        self.sounds['score']:play()
+        local playerScored, score = self.scores:increment(dirOut)
+        if score == 2 then
+            self.winningPlayer = playerScored
+            self.state = 'done'
+        else
+            self.state = 'start'
+        end
+        self.ball:reset()
+    end
+end
+
 function Game:update(dt)
     if self.state == 'play' then
         self:handleCollisions()
+        self:handleScore()
     end
 
     self.player1:handleInput()
@@ -111,8 +129,15 @@ function Game:render()
             self.width,
             'center'
         )
-    elseif self.state == 'play' then
-        -- nothing for now
+    elseif self.state == 'done' then
+        love.graphics.setFont(self.fonts.large)
+        love.graphics.printf(
+            "Player " .. tostring(self.winningPlayer) .. " wins!",
+            0,
+            self.height / 8,
+            self.width,
+            'center'
+        )
     end
 
     self.scores:render(self.width, self.height)

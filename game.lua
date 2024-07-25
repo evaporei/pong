@@ -3,6 +3,7 @@ local push = require('push')
 local Fonts = require('fonts')
 local Paddle = require('paddle')
 local Ball = require('ball')
+local Scores = require('scores')
 
 local Game = {}
 
@@ -31,6 +32,8 @@ function Game:setup()
     self.player2 = Paddle.new(self.width - 10, self.height - 50)
 
     self.ball = Ball.new(self.width, self.height)
+
+    self.scores = Scores.new(self.fonts.score)
 
     -- d instead of w because I use workman layout
     self.player1:setInput({ up = 'd', down = 's' })
@@ -91,6 +94,8 @@ function Game:render()
     elseif self.state == 'play' then
         -- nothing for now
     end
+
+    self.scores:render(self.width, self.height)
 
     self.player1:render()
     self.player2:render()

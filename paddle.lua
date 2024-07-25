@@ -2,11 +2,12 @@ local Paddle = {}
 
 local SPEED = 200
 
-function Paddle.new(x, y)
+function Paddle.new(startX, startY)
     local self = {}
 
-    self.x = x
-    self.y = y
+    self.startX, self.startY = startX, startY
+
+    self.x, self.y = self.startX, self.startY
 
     self.width = 5
     self.height = 20

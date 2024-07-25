@@ -12,6 +12,8 @@ function Game.new()
     self.width = 432
     self.height = 243
 
+    self.state = 'start'
+
     setmetatable(self, { __index = Game })
     return self
 end
@@ -48,6 +50,14 @@ end
 function Game:handleKeyPressed(key)
     if key == 'escape' then
         love.event.quit()
+    elseif key == 'enter' or key == 'return' then
+        if self.state == 'start' then
+            self.state = 'play'
+        else
+            self.state = 'start'
+
+            self.ball:reset()
+        end
     end
 end
 
@@ -58,7 +68,9 @@ function Game:update(dt)
     self.player1:update(dt, self.height)
     self.player2:update(dt, self.height)
 
-    self.ball:update(dt)
+    if self.state == 'play' then
+        self.ball:update(dt)
+    end
 end
 
 function Game:render()
@@ -66,6 +78,19 @@ function Game:render()
 
     -- background color
     love.graphics.clear(40/255, 45/255, 52/255, 255/255)
+
+    if self.state == 'start' then
+        love.graphics.setFont(self.fonts.small)
+        love.graphics.printf(
+            "Press 'Enter' to play!",
+            0,
+            self.height / 8,
+            self.width,
+            'center'
+        )
+    elseif self.state == 'play' then
+        -- nothing for now
+    end
 
     self.player1:render()
     self.player2:render()

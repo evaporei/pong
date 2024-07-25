@@ -14,8 +14,10 @@ function Ball.new(gameWidth, gameHeight)
     self.width = 4
     self.height = 4
 
-    self.x = gameWidth / 2 - (self.width / 2)
-    self.y = gameHeight / 2 - (self.height / 2)
+    self.startX = gameWidth / 2 - (self.width / 2)
+    self.startY = gameHeight / 2 - (self.height / 2)
+
+    self.x, self.y = self.startX, self.startY
 
     self.vx = randVX()
     self.vy = randVY()
@@ -27,6 +29,13 @@ end
 function Ball:update(dt)
     self.x = self.x + self.vx * dt
     self.y = self.y + self.vy * dt
+end
+
+function Ball:reset()
+    self.x, self.y = self.startX, self.startY
+
+    self.vx = randVX()
+    self.vy = randVY()
 end
 
 function Ball:render()

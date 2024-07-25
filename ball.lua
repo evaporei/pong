@@ -26,6 +26,47 @@ function Ball.new(gameWidth, gameHeight)
     return self
 end
 
+function Ball:collides(paddle)
+    if self.x > paddle.x + paddle.width or self.x + self.width < paddle.x then
+        return false
+    end
+    if self.y > paddle.y + paddle.height or self.y + self.height < paddle.y then
+        return false
+    end
+    return true
+end
+
+function Ball:bouncePaddle(paddle, dir)
+    -- change x dir, randomize it a bit
+    self.vx = -self.vx * 1.03
+
+    -- we're inside of the paddle, let's get out
+    if dir == 'right' then
+        self.x = paddle.x + paddle.width
+    elseif dir == 'left' then
+        self.x = paddle.x - paddle.width
+    end
+
+    -- keep the same y dir, but randomize speed
+    if self.vy < 0 then
+        self.vy = -math.random(10, 150)
+    else
+        self.vy = math.random(10, 150)
+    end
+end
+
+function Ball:bounceWall(gameHeight)
+    if self.y + self.height > gameHeight then
+        self.y = gameHeight - self.height
+        self.vy = -self.vy
+    end
+
+    if self.y < 0 then
+        self.y = 0
+        self.vy = -self.vy
+    end
+end
+
 function Ball:update(dt)
     self.x = self.x + self.vx * dt
     self.y = self.y + self.vy * dt

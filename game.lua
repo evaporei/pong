@@ -64,7 +64,21 @@ function Game:handleKeyPressed(key)
     end
 end
 
+function Game:handleCollisions()
+    if self.ball:collides(self.player1) then
+        self.ball:bouncePaddle(self.player1, 'right')
+    end
+    if self.ball:collides(self.player2) then
+        self.ball:bouncePaddle(self.player2, 'left')
+    end
+    self.ball:bounceWall(self.height)
+end
+
 function Game:update(dt)
+    if self.state == 'play' then
+        self:handleCollisions()
+    end
+
     self.player1:handleInput()
     self.player2:handleInput()
 

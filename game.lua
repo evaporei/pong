@@ -8,13 +8,15 @@ local Sounds = require('sounds')
 
 local Game = {}
 
+local WINNING_SCORE = 10
+
 function Game.new()
     local self = {}
 
     self.width = 432
     self.height = 243
 
-    self.state = 'start'
+    self.state = 'serve'
 
     setmetatable(self, { __index = Game })
     return self
@@ -56,13 +58,13 @@ function Game:handleKeyPressed(key)
     if key == 'escape' then
         love.event.quit()
     elseif key == 'enter' or key == 'return' then
-        if self.state == 'start' then
+        if self.state == 'serve' then
             self.state = 'play'
         elseif self.state == 'play' then
-            self.state = 'start'
+            self.state = 'serve'
             self.ball:reset()
         elseif self.state == 'done' then
-            self.state = 'start'
+            self.state = 'serve'
             self.scores:reset()
         end
     end
@@ -87,11 +89,11 @@ function Game:handleScore()
     if dirOut then
         self.sounds['score']:play()
         local playerScored, score = self.scores:increment(dirOut)
-        if score == 2 then
+        if score == WINNING_SCORE then
             self.winningPlayer = playerScored
             self.state = 'done'
         else
-            self.state = 'start'
+            self.state = 'serve'
         end
         self.ball:reset()
     end
@@ -120,7 +122,7 @@ function Game:render()
     -- background color
     love.graphics.clear(40/255, 45/255, 52/255, 255/255)
 
-    if self.state == 'start' then
+    if self.state == 'serve' then
         love.graphics.setFont(self.fonts.small)
         love.graphics.printf(
             "Press 'Enter' to play!",

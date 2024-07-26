@@ -1,4 +1,4 @@
-local push = require('push')
+local push = require('vendor.push')
 
 local Fonts = require('fonts')
 local Paddle = require('paddle')
